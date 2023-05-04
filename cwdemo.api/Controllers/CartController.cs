@@ -6,7 +6,7 @@ namespace cwdemo.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CartController : ControllerBase
+    public class CartController : BaseController
     {
         // GET: api/<CartController>
         [HttpGet]
