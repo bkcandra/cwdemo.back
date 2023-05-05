@@ -95,20 +95,23 @@ namespace cwdemo.data.Repositories
             existingCatalog.Price = catalog.Price;
             existingCatalog.Type = catalog.Type;
             existingCatalog.StoreId = catalog.StoreId;
+            existingCatalog.Active = catalog.Active;
 
+            var index = Singleton<List<CatalogEntity>>.Instance.FindIndex(p => p.Id == catalogId);
+            Singleton<List<CatalogEntity>>.Instance[index] = existingCatalog;
             return true;
         }
 
         public async Task<bool> DeleteCatalog(long catalogId)
         {
             // Get the catalog by ID
-            var existingCatalog = await GetCatalogById(catalogId);
+            var existingCatalog = _catalogEntities.FirstOrDefault(x => x.Id == catalogId);
             if (existingCatalog == null)
                 return false;
 
             // Remove the catalog
             _catalogEntities.Remove(existingCatalog);
-
+            Singleton<List<CatalogEntity>>.Instance = _catalogEntities;
             return true;
         }
     }

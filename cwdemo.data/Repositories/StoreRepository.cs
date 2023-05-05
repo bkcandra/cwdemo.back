@@ -13,8 +13,6 @@ namespace cwdemo.data.Repositories
             _storeEntities = Singleton<List<StoreEntity>>.Instance ?? new List<StoreEntity>();
         }
 
-
-
         public async Task<StoreEntity> GetStoreById(long storeId)
         {
             var store = _storeEntities.FirstOrDefault(x => x.Id == storeId);
@@ -45,18 +43,22 @@ namespace cwdemo.data.Repositories
             }
             existingStore.Name = store.Name;
             existingStore.Location = store.Location;
+
+            var index = Singleton<List<StoreEntity>>.Instance.FindIndex(p => p.Id == storeId);
+            Singleton<List<StoreEntity>>.Instance[index] = existingStore;
             return true;
         }
 
         public async Task<bool> DeleteStore(long storeId)
         {
-            var store = await GetStoreById(storeId);
+            // Get the catalog by ID
+            var store = _storeEntities.FirstOrDefault(x => x.Id == storeId);
             if (store == null)
-            {
                 return false;
-            }
+
+            // Remove the catalog
             _storeEntities.Remove(store);
+            Singleton<List<StoreEntity>>.Instance = _storeEntities;
             return true;
         }
     }
-}
