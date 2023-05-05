@@ -2,7 +2,7 @@
 using cwdemo.data.Interfaces;
 using cwdemo.infrastructure;
 
-namespace cwdemo.data
+namespace cwdemo.data.Repositories
 {
     public class StoreRepository : IStoreRepository
     {

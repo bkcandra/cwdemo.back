@@ -1,4 +1,5 @@
-﻿using cwdemo.core.Services.Interfaces;
+﻿using cwdemo.core.Models;
+using cwdemo.core.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,34 +25,42 @@ namespace cwdemo.api.Controllers
 
         // GET: api/<CatalogController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> GetProducts()
         {
-            return new string[] { "value1", "value2" };
+            var products = await _catalogService.GetAll();
+            return HandleServiceResponse(products);
         }
 
-        // GET api/<CatalogController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetProduct(int id)
         {
-            return "value";
+            var product = await _catalogService.Get(id);
+            return HandleServiceResponse(product);
         }
 
         // POST api/<CatalogController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> CreateProduct([FromBody] CreateCatalog catalog)
         {
+            var createdProduct = await _catalogService.Create(catalog);
+            return HandleServiceResponse(createdProduct);
         }
 
         // PUT api/<CatalogController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] Catalog catalog)
         {
+            var updatedProduct = await _catalogService.Update(catalog);
+            return HandleServiceResponse(updatedProduct);
         }
 
         // DELETE api/<CatalogController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
+            var deletedProduct = await _catalogService.Delete(id);
+            return HandleServiceResponse(deletedProduct);
         }
     }
 }

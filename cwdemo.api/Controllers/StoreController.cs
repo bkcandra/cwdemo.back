@@ -10,48 +10,42 @@ namespace cwdemo.api.Controllers
     [ApiController]
     public class StoreController : BaseApiController
     {
-        private IStoreService _storeService;
+        private readonly IStoreService _storeService;
 
-        /// <summary>
-        /// Constructs the Store Controller
-        /// </summary>
-        /// <param name="productService"></param>
-        public StoreController(IStoreService StoreService)
+        public StoreController(IStoreService storeService)
         {
-            this._StoreService = StoreService;
+            _storeService = storeService;
         }
 
-        // GET: api/<StoreController>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return this.HandleServiceResponse(await this._storeService.Get());
+            return HandleServiceResponse(await _storeService.GetAll());
         }
 
-        // GET api/<StoreController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{storeId}")]
         public async Task<IActionResult> Get(int storeId)
         {
-            return this.HandleServiceResponse(await this._storeService.Get(storeId));
+            return HandleServiceResponse(await _storeService.Get(storeId));
         }
 
-        // POST api/<StoreController>
         [HttpPost]
-        public void Post([FromBody] CreateStore store)
+        public async Task<IActionResult> Post([FromBody] CreateStore store)
         {
-            return this.HandleServiceResponse(await this._storeService.Create(store));
+            return HandleServiceResponse(await _storeService.Create(store));
         }
 
-        // PUT api/<StoreController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{storeId}")]
+        public async Task<IActionResult> Put(int storeId, [FromBody] Store store)
         {
+            return HandleServiceResponse(await _storeService.Update(store));
         }
 
-        // DELETE api/<StoreController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{storeId}")]
+        public async Task<IActionResult> Delete(int storeId)
         {
+            return HandleServiceResponse(await _storeService.Delete(storeId));
         }
     }
+
 }
