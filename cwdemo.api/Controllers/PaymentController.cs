@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using cwdemo.core.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +9,17 @@ namespace cwdemo.api.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
     {
+        IStoreService _StoreService;
+
+        /// <summary>
+        /// Constructs the Store Controller
+        /// </summary>
+        /// <param name="productService"></param>
+        public PaymentController(IStoreService StoreService)
+        {
+            this._StoreService = StoreService;
+        }
+
         // GET: api/<PaymentController>
         [HttpGet]
         public IEnumerable<string> Get()

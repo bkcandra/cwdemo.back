@@ -1,13 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
+﻿using cwdemo.core.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace cwdemo.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CartController : BaseController
+    public class CartController : ControllerBase
     {
+        ICartService _cartService;
+
+        /// <summary>
+        /// Constructs the Cart Controller
+        /// </summary>
+        /// <param name="productService"></param>
+        public CartController(ICartService productService)
+        {
+            this._cartService = productService;
+        }
+
+
+
+
+
+
         // GET: api/<CartController>
         [HttpGet]
         public IEnumerable<string> Get()

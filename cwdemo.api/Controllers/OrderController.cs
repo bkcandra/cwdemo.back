@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using cwdemo.core.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +9,17 @@ namespace cwdemo.api.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
+        IOrderService _OrderService;
+
+        /// <summary>
+        /// Constructs the Order Controller
+        /// </summary>
+        /// <param name="productService"></param>
+        public OrderController(IOrderService OrderService)
+        {
+            this._OrderService = OrderService;
+        }
+
         // GET: api/<OrderController>
         [HttpGet]
         public IEnumerable<string> Get()

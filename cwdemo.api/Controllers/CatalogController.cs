@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using cwdemo.core.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +9,19 @@ namespace cwdemo.api.Controllers
     [ApiController]
     public class CatalogController : ControllerBase
     {
+        ICatalogService _catalogService;
+
+        /// <summary>
+        /// Constructs the Catalog Controller
+        /// </summary>
+        /// <param name="productService"></param>
+        public CatalogController(ICatalogService catalogService)
+        {
+            this._catalogService = catalogService;
+        }
+
+
+
         // GET: api/<CatalogController>
         [HttpGet]
         public IEnumerable<string> Get()
