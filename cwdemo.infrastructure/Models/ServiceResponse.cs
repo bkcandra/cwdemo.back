@@ -121,6 +121,7 @@ namespace cwdemo.infrastructure.Models
             : base(true)
         {
             Content = data;
+            this.StatusCode = 200;
         }
 
         /// <summary>
