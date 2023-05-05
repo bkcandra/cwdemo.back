@@ -37,7 +37,12 @@ namespace cwdemo.core.Services
                 return new ServiceResponse<List<Catalog>>();
 
             var result = _mapper.Map<List<Catalog>>(catalogs);
+            var store = await _repositories.Stores.GetAllStores();
+            foreach (var catalog in result)
+            {
+                catalog.StoreName = store?.FirstOrDefault(x => x.Id == catalog.StoreId)?.Name ?? "";
 
+            }
             return new ServiceResponse<List<Catalog>>(result);
         }
 
@@ -58,7 +63,7 @@ namespace cwdemo.core.Services
             return new ServiceResponse<Catalog>(resp);
         }
 
-        public async Task<ServiceResponse<Catalog>> Update(Catalog catalog)
+        public async Task<ServiceResponse<Catalog>> Update(updateCatalog catalog)
         {
             var serviceResponse = new ServiceResponse<Catalog>();
 
@@ -71,9 +76,14 @@ namespace cwdemo.core.Services
                 return serviceResponse;
             }
 
+            var store = await _repositories.Stores.GetStoreById(catalog.StoreId);
+            if (store == null)
+                return new ServiceResponse<Catalog>(false, "Store does not exist", (int)HttpStatusCode.NotFound);
+
             // Map the updated catalog to the entity model
             var updatedCatalogEntity = _mapper.Map<CatalogEntity>(catalog);
             updatedCatalogEntity.Id = existingCatalog.Id; // Make sure the ID is set correctly
+            updatedCatalogEntity.Active = catalog.Active;
 
             // Update the existing catalog
             var updateResult = await _repositories.Catalogs.UpdateCatalog(catalog.Id, updatedCatalogEntity);

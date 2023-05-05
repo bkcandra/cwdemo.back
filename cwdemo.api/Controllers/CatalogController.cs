@@ -49,7 +49,7 @@ namespace cwdemo.api.Controllers
         // PUT api/<CatalogController>/5
         [HttpPut("{id}")]
 
-        public async Task<IActionResult> UpdateProduct(int id, [FromBody] Catalog catalog)
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] updateCatalog catalog)
         {
             var updatedProduct = await _catalogService.Update(catalog);
             return HandleServiceResponse(updatedProduct);

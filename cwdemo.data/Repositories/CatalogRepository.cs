@@ -72,7 +72,8 @@ namespace cwdemo.data.Repositories
                 return null;
 
 
-            _catalogEntities.Add(newCatalog);
+            newCatalog.Id = _catalogEntities.Count > 0 ? _catalogEntities.Max(x => x.Id) + 1 : 1;
+            Singleton<List<CatalogEntity>>.Instance.Add(newCatalog);
 
             return newCatalog;
         }

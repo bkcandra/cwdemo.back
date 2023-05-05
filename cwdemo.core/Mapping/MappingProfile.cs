@@ -13,6 +13,16 @@ namespace cwdemo.core.Mapping
         {
             CreateMap<CatalogStoreEntity, CatalogEntity>().ReverseMap();
             CreateMap<CreateStore, StoreEntity>().ReverseMap();
+            CreateMap<Store, StoreEntity>().ReverseMap();
+            CreateMap<CreateStore, Store>().ReverseMap();
+
+            CreateMap<CatalogEntity, CreateCatalog>().ReverseMap();
+            CreateMap<CatalogEntity, Catalog>().ReverseMap();
+            CreateMap<CreateCatalog, Catalog>().ReverseMap();
+
+
+
+            CreateMap<CatalogStoreEntity, Catalog>().ReverseMap();
 
         }
     }

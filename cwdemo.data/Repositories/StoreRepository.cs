@@ -30,7 +30,7 @@ namespace cwdemo.data.Repositories
         public async Task<StoreEntity> AddStore(StoreEntity store)
         {
             store.Id = _storeEntities.Count > 0 ? _storeEntities.Max(x => x.Id) + 1 : 1;
-            _storeEntities.Add(store);
+            Singleton<List<StoreEntity>>.Instance.Add(store);
             return store;
         }
 

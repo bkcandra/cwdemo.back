@@ -15,7 +15,8 @@ public class CatalogRepositoryTests
     public async Task SetUp()
     {
         // Arrange
-        Singleton<List<CatalogEntity>>.Instance = new List<CatalogEntity>(){ new CatalogEntity
+        Singleton<List<CatalogEntity>>.Instance = new List<CatalogEntity>(){
+            new CatalogEntity
         {
             Id = 1,
             Name = "Margherita",
@@ -25,7 +26,8 @@ public class CatalogRepositoryTests
             Type = (int)CatalogType.Pizza,
             StoreId = 1
 
-        },new CatalogEntity
+        },
+            new CatalogEntity
         {
             Id = 2,
             Name = "Pepperoni",
