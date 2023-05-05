@@ -1,4 +1,5 @@
-﻿using cwdemo.core.Services.Interfaces;
+﻿using cwdemo.core.Models;
+using cwdemo.core.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -7,9 +8,9 @@ namespace cwdemo.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StoreController : ControllerBase
+    public class StoreController : BaseApiController
     {
-        IStoreService _StoreService;
+        private IStoreService _storeService;
 
         /// <summary>
         /// Constructs the Store Controller
@@ -20,27 +21,25 @@ namespace cwdemo.api.Controllers
             this._StoreService = StoreService;
         }
 
-
-
-
         // GET: api/<StoreController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            return this.HandleServiceResponse(await this._storeService.Get());
         }
 
         // GET api/<StoreController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int storeId)
         {
-            return "value";
+            return this.HandleServiceResponse(await this._storeService.Get(storeId));
         }
 
         // POST api/<StoreController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] CreateStore store)
         {
+            return this.HandleServiceResponse(await this._storeService.Create(store));
         }
 
         // PUT api/<StoreController>/5

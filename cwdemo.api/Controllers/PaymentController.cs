@@ -7,7 +7,7 @@ namespace cwdemo.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    public class PaymentController : BaseApiController
     {
         IStoreService _StoreService;
 

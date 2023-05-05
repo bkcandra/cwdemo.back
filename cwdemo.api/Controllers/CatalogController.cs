@@ -7,7 +7,7 @@ namespace cwdemo.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CatalogController : ControllerBase
+    public class CatalogController : BaseApiController
     {
         ICatalogService _catalogService;
 

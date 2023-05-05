@@ -4,11 +4,11 @@ namespace cwdemo.core.Services
 {
     public class BaseService
     {
-        protected IRepositories _repository;
+        protected IRepositories _repositories;
 
         public BaseService(IRepositories repositories)
         {
-            this._repository = repositories;
+            this._repositories = repositories;
         }
     }
 }
