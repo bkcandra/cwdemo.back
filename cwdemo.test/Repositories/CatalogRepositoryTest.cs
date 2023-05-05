@@ -4,6 +4,7 @@ using cwdemo.data.Repositories;
 using cwdemo.infrastructure;
 using NUnit.Framework;
 
+
 [TestFixture]
 public class CatalogRepositoryTests
 {
