@@ -8,7 +8,7 @@
         public string StoreName { get; set; }
     }
 
-    public class updateCatalog : CreateCatalog
+    public class UpdateCatalog : CreateCatalog
     {
         public long Id { get; set; }
         public bool Active { get; set; }

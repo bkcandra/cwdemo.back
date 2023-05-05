@@ -63,7 +63,7 @@ namespace cwdemo.core.Services
             return new ServiceResponse<Catalog>(resp);
         }
 
-        public async Task<ServiceResponse<Catalog>> Update(updateCatalog catalog)
+        public async Task<ServiceResponse<Catalog>> Update(UpdateCatalog catalog)
         {
             var serviceResponse = new ServiceResponse<Catalog>();
 

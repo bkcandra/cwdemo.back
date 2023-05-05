@@ -1,6 +1,5 @@
 ﻿using cwdemo.infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Net;
 
 namespace cwdemo.api.Controllers
@@ -18,7 +17,6 @@ namespace cwdemo.api.Controllers
         protected IActionResult HandleServiceResponse<T>(T response) where T : ServiceResponse
         {
             if (response == null) return BadRequest();
-            response.CorrelationToken = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
             switch (response.StatusCode)
             {
                 case (int)HttpStatusCode.BadRequest:

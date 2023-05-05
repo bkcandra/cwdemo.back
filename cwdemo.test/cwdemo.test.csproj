@@ -19,10 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\cwdemo.api\cwdemo.api.csproj" />
     <ProjectReference Include="..\cwdemo.core\cwdemo.core.csproj" />
     <ProjectReference Include="..\cwdemo.data\cwdemo.data.csproj" />
   </ItemGroup>
