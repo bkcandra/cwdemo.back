@@ -12,8 +12,8 @@ namespace cwdemo.data.Repositories
 
         public CatalogRepository()
         {
-            _catalogEntities = Singleton<List<CatalogEntity>>.Instance;
-            _storeEntities = Singleton<List<StoreEntity>>.Instance;
+            _catalogEntities = Singleton<List<CatalogEntity>>.Instance ?? new List<CatalogEntity>();
+            _storeEntities = Singleton<List<StoreEntity>>.Instance ?? new List<StoreEntity>();
         }
 
         public async Task<CatalogEntity> GetCatalogById(long catalogId)

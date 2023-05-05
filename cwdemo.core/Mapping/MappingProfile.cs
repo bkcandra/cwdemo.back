@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using cwdemo.core.Models;
 using cwdemo.data.Entities;
 
 namespace cwdemo.core.Mapping
@@ -11,6 +12,8 @@ namespace cwdemo.core.Mapping
         public MappingProfile()
         {
             CreateMap<CatalogStoreEntity, CatalogEntity>().ReverseMap();
+            CreateMap<CreateStore, StoreEntity>().ReverseMap();
+
         }
     }
 }

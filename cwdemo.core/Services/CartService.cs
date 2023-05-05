@@ -1,4 +1,5 @@
-﻿using cwdemo.core.Models;
+﻿using AutoMapper;
+using cwdemo.core.Models;
 using cwdemo.core.Services.Interfaces;
 using cwdemo.data.Interfaces;
 using cwdemo.infrastructure.Models;
@@ -7,7 +8,7 @@ namespace cwdemo.core.Services
 {
     public class CartService : BaseService, ICartService
     {
-        public CartService(IRepositories repositories) : base(repositories)
+        public CartService(IRepositories repositories, IMapper mapper) : base(repositories, mapper)
         {
         }
 

@@ -10,7 +10,7 @@ namespace cwdemo.data.Repositories
 
         public StoreRepository()
         {
-            _storeEntities = Singleton<List<StoreEntity>>.Instance;
+            _storeEntities = Singleton<List<StoreEntity>>.Instance ?? new List<StoreEntity>();
         }
 
 

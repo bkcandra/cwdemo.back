@@ -1,3 +1,7 @@
+using AutoMapper;
+using cwdemo.core.Mapping;
+using cwdemo.infrastructure.DependencyManagement;
+
 namespace cwdemo.api
 {
     public class Program
@@ -16,6 +20,15 @@ namespace cwdemo.api
             builder.Services.AddSwaggerGen();
 
 
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            builder.Services.AddSingleton(mapper);
+
+
+            builder.Services.RegisterDependencies();
 
             var app = builder.Build();
 
