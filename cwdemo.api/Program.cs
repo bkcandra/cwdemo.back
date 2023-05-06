@@ -29,7 +29,16 @@ namespace cwdemo.api
             });
             IMapper mapper = mappingConfig.CreateMapper();
             builder.Services.AddSingleton(mapper);
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
 
             builder.Services.RegisterDependencies();
 
@@ -41,7 +50,7 @@ namespace cwdemo.api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
