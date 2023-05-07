@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Title from '../shared-components/Title';
 import { useContext, useEffect, useCallback } from 'react';
 import { MainTitle } from '../main-page/components/maintitle';
-import { Grid, Paper } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { IStore } from '../../utilities/api/interfaces/IStoreModel'
 import { BackendAPI, useBackendApi } from '../../utilities/api/backendapi';
 import ListTable from '../shared-components/table';
@@ -35,8 +35,6 @@ const AdminStoreList = (): React.ReactElement => {
     setTitle('Administration - Store');
     requestGetStore()
   }, [setTitle, requestGetStore]);
-
-
 
 
   const handleDeleteStore = useCallback((storeId: number) => {
@@ -76,6 +74,21 @@ const AdminStoreList = (): React.ReactElement => {
                 'ID': (store: IStore) => store.id,
                 'Name': (store: IStore) => store.name,
                 'Description': (store: IStore) => store.location,
+                'Actions': (store: IStore) => (
+                  <Box display="flex" flexDirection="row" alignItems="center">
+                    <Button variant="contained" component={Link} to={`/admin/store/update`}>
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDeleteStore(store.id)}
+                      sx={{ ml: 1 }}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                ),
               }}
             />
 

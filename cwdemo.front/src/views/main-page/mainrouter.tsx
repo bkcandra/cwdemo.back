@@ -9,7 +9,7 @@ import CreateStore from "../adminstore-page/storecreate";
 import AdminStoreList from "../adminstore-page/storelist";
 import Dashboard from "../dashboard-page/dashboard";
 import ErrorPage from "../error-page/errorpage";
-import Orders from "../order-page/orders";
+import OrderPage from "../order-page/orders";
 import MainPage from "./mainpage";
 
 
@@ -25,7 +25,7 @@ const mainrouter = createBrowserRouter([
       },
       {
         path: "/orders",
-        element: <Orders />,
+        element: <OrderPage />,
       },
       {
         path: "/admin/store",

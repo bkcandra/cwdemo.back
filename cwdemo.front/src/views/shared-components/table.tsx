@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridApi, GridKeyValue } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import { IAction, ICatalog } from '../../utilities/api/interfaces/ICatalogModel';
 import { BackendAPI, useBackendApi } from '../../utilities/api/backendapi';
 import { Link } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 
 interface TableProps {
     headers: string[];
@@ -29,11 +29,7 @@ const DataTable = ({ headers, data, config }: TableProps) => {
         field: header,
         headerName: header,
         flex: header === 'Actions' ? 1 : undefined,
-
-
     }));
-
-
 
 
 

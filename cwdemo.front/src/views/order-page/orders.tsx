@@ -1,115 +1,206 @@
 import * as React from 'react';
-import Link from '@mui/material/Link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { useState, useContext, useEffect, useCallback, ReactNode } from 'react';
+import Button from '@mui/material/Button';
 import Title from '../shared-components/Title';
-import { useContext, useEffect } from 'react';
 import { MainTitle } from '../main-page/components/maintitle';
-import { Grid, Paper } from '@mui/material';
+import { Grid, Paper, MenuItem, Select, FormControl, InputLabel, IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, Typography } from '@mui/material';
+import { ICatalog } from '../../utilities/api/interfaces/ICatalogModel';
+import { BackendAPI, useBackendApi } from '../../utilities/api/backendapi';
+import { SelectChangeEvent } from '@mui/material/Select/Select';
+import { IStore } from '../../utilities/api/interfaces/IStoreModel';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-// Generate Order Data
-function createData(
-  id: number,
-  date: string,
-  name: string,
-  shipTo: string,
-  paymentMethod: string,
-  amount: number,
-) {
-  return { id, date, name, shipTo, paymentMethod, amount };
+
+interface CatalogListProps {
+  items: ICatalog[];
+  onAddToCart: (item: ICatalog) => void;
 }
+const CatalogItem = ({ items, onAddToCart }: CatalogListProps): React.ReactElement => {
+  const handleAddToCart = (item: ICatalog) => {
+    console.log(`Added ${item.name} to cart`);
+    onAddToCart(item);
+  };
 
-const rows = [
-  createData(
-    0,
-    '16 Mar, 2019',
-    'Elvis Presley',
-    'Tupelo, MS',
-    'VISA ⠀•••• 3719',
-    312.44,
-  ),
-  createData(
-    1,
-    '16 Mar, 2019',
-    'Paul McCartney',
-    'London, UK',
-    'VISA ⠀•••• 2574',
-    866.99,
-  ),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(
-    3,
-    '16 Mar, 2019',
-    'Michael Jackson',
-    'Gary, IN',
-    'AMEX ⠀•••• 2000',
-    654.39,
-  ),
-  createData(
-    4,
-    '15 Mar, 2019',
-    'Bruce Springsteen',
-    'Long Branch, NJ',
-    'VISA ⠀•••• 5919',
-    212.79,
-  ),
-];
 
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
-}
+  return (
+    <Grid container spacing={3}>
+      {items.map(item => (
+        <Grid item xs={4} lg={3} key={item.id}>
+          <Paper
+            sx={{
+              p: 1,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              height: '200px'
+            }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <div>{item.name} - {item.description}</div>
+              </Grid>
+              <Grid item xs={12}>
+                <div>$ {item.price}</div>
+              </Grid>
+              <Grid item xs={12}>
+                <Button variant="contained" onClick={() => handleAddToCart(item)}>
+                  Add to Cart
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
 
-export default function Orders() {
+
+const OrderPage = (): React.ReactElement => {
   const { setTitle } = useContext(MainTitle);
 
+  const [storeId, setStoreId] = useState<number>(0);
+  const [catalogItems, setCatalogItems] = useState<ICatalog[]>([]);
+  const [orderItems, setOrderItems] = useState<ICatalog[]>([]);
+
+  const { request, response: responseGetCatalog } = useBackendApi<ICatalog[]>(
+    BackendAPI.catalog.get
+  );
+
+  const { request: requestGetStore, response: responseGetStore } = useBackendApi<IStore[]>(
+    BackendAPI.store.get
+  );
+
   useEffect(() => {
-    setTitle('Orders');
-  }, [setTitle]);
+    setTitle('Catalog List');
+    request()
+  }, [setTitle, request]);
+
+  useEffect(() => {
+    if (responseGetCatalog?.content) {
+      const filteredCatalogItems = storeId !== 0 ? responseGetCatalog.content.filter(item => item.storeId === storeId) : responseGetCatalog.content;
+      setCatalogItems(filteredCatalogItems);
+    }
+  }, [responseGetCatalog, storeId]);
+
+  const handleStoreChange = (event: SelectChangeEvent<number>, child: ReactNode) => {
+    const storeId = event.target.value as number;
+    setStoreId(storeId);
+  };
+
+  const handleAddToCart = useCallback((item: ICatalog) => {
+
+    setOrderItems((prevItems) => [...prevItems, item]);
+  }, []);
+
+  const calculateTotalPrice = () => {
+    return orderItems.reduce((total, item) => total + item.price, 0);
+  }
+
+  const handleRemoveItem = (index: number) => {
+    const updatedItems = [...orderItems];
+    updatedItems.splice(index, 1);
+    setOrderItems(updatedItems);
+  };
 
   return (
     <React.Fragment>
       <Grid container spacing={3}>
-        {/* Chart */}
-        <Grid item lg={12}>
+
+        <Grid item spacing={3} xs={12} lg={8}>
+          {/* Filter */}
+          <Grid item lg={12}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}
+            >
+              <FormControl sx={{ m: 1, minWidth: 120 }}>
+                <InputLabel id="store-select-label">Store</InputLabel>
+                <Select
+                  labelId="store-select-label"
+                  id="store-select"
+                  value={storeId}
+                  label="Store"
+                  onChange={handleStoreChange}
+                >
+                  <MenuItem value={0}>All Stores</MenuItem>
+                  {responseGetStore && responseGetStore.content && responseGetStore?.content.map(store => (
+                    <MenuItem key={store.id} value={store.id}>{store.name}</MenuItem>
+                  ))}
+                </Select>
+
+              </FormControl>
+            </Paper>
+          </Grid>
+          {/* Catalog */}
+          <Grid item lg={12}>
+            <Paper
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <CatalogItem
+                items={catalogItems}
+                onAddToCart={handleAddToCart}
+              />
+            </Paper>
+          </Grid>
+        </Grid>
+        <Grid item spacing={3} xs={12} lg={4}>
+
           <Paper
             sx={{
               p: 2,
               display: 'flex',
               flexDirection: 'column',
+              alignItems: 'center',
             }}
           >
-            <Title>Recent Orders</Title>
-            <Table >
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Ship To</TableCell>
-                  <TableCell>Payment Method</TableCell>
-                  <TableCell align="right">Sale Amount</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.shipTo}</TableCell>
-                    <TableCell>{row.paymentMethod}</TableCell>
-                    <TableCell align="right">{`$${row.amount}`}</TableCell>
-                  </TableRow>
+            <Title>Order</Title>
+            {/* Order Items */}
+            {orderItems.length > 0 ? (
+              <List>
+                {orderItems.map((item, index) => (
+                  <ListItem key={index}>
+                    <ListItemText
+                      primary={item.name}
+                      secondary={`$${item.description}`}
+                    />
+                    <ListItemText
+                      secondary={`$${item.price}`}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => handleRemoveItem(index)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
                 ))}
-              </TableBody>
-            </Table>
-            <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-              See more orders
-            </Link>
+              </List>
+            ) : (
+              <Typography variant="body1">No items added to cart.</Typography>
+            )}
+            {/* Total */}
+            {orderItems.length > 0 && (
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                Total: ${calculateTotalPrice()}
+              </Typography>
+            )}
           </Paper>
         </Grid>
       </Grid>
     </React.Fragment>
   );
-}
+};
+
+export default OrderPage;
