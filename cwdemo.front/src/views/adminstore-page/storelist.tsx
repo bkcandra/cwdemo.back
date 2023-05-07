@@ -14,6 +14,7 @@ import { BackendAPI, useBackendApi } from '../../utilities/api/backendapi';
 import ListTable from '../shared-components/table';
 import DataTable from '../shared-components/table';
 import { Link } from 'react-router-dom';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 
 
@@ -28,8 +29,10 @@ const AdminStoreList = (): React.ReactElement => {
   );
 
   const { request: requestDeleteStore } = useBackendApi<void>(
-    BackendAPI.store.delete
+    BackendAPI.store.delete, 'DELETE'
   );
+
+
 
   useEffect(() => {
     setTitle('Administration - Store');
@@ -37,15 +40,48 @@ const AdminStoreList = (): React.ReactElement => {
   }, [setTitle, requestGetStore]);
 
 
-  const handleDeleteStore = useCallback((storeId: number) => {
-    console.log(storeId)
-    // requestDeleteStore(storeId).then(() => {
-    //   requestGetStore();
-    // });
 
-  }, [requestDeleteStore, requestGetStore]);
 
-  
+  const handleDeleteStore = async (e: any, row: any) => {
+    await requestDeleteStore('', false, row.id);
+    requestGetStore();
+  };
+
+  const headers = ['id', 'name', 'location'];
+  const columns: GridColDef[] = headers.map((header) => ({
+    headerName: header,
+    field: header,
+    width: 200
+  }));
+
+  columns.push({
+    field: "editButton",
+    headerName: "Actions",
+    description: "Actions column.",
+    sortable: false,
+    width: 160,
+    renderCell: (params) => {
+      return (
+        <>
+          <Button
+            variant="contained"
+          >
+            Edit
+          </Button>
+          &nbsp;
+          <Button color='error'
+            variant="contained"
+            onClick={(e) => handleDeleteStore(e, params.row)}
+          >
+            delete
+          </Button>
+        </>
+
+
+      );
+    }
+  });
+
 
 
   return (
@@ -66,32 +102,10 @@ const AdminStoreList = (): React.ReactElement => {
                 Create store
               </Button>
             </Grid>
-
-            <DataTable
-              headers={['ID', 'Name', 'Description']}
-              data={responseGetStore?.content || []}
-              config={{
-                'ID': (store: IStore) => store.id,
-                'Name': (store: IStore) => store.name,
-                'Description': (store: IStore) => store.location,
-                'Actions': (store: IStore) => (
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    <Button variant="contained" component={Link} to={`/admin/store/update`}>
-                      Edit
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => handleDeleteStore(store.id)}
-                      sx={{ ml: 1 }}
-                    >
-                      Delete
-                    </Button>
-                  </Box>
-                ),
-              }}
+            <DataGrid
+              rows={responseGetStore?.content || []}
+              columns={columns}
             />
-
           </Paper>
         </Grid>
       </Grid>

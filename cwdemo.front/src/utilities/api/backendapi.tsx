@@ -14,9 +14,9 @@ export const BackendAPI = {
   },
   catalog: {
     get: 'https://localhost:5000/api/catalog',
-    create: 'https://localhost:5000/api/catalog/',
-    update: 'https://localhost:5000/api/catalog/',
-    delete: 'https://localhost:5000/api/catalog/'
+    create: 'https://localhost:5000/api/catalog',
+    update: 'https://localhost:5000/api/catalog',
+    delete: 'https://localhost:5000/api/catalog'
   }
 };
 
@@ -30,6 +30,7 @@ export function useBackendApi<T>(
   request: (
     currentPayload?: any | undefined,
     alert?: boolean,
+    slug?: string,
     callback?: (success: any) => any
   ) => void; response: ServiceResponse<T>
 } {
@@ -41,7 +42,7 @@ export function useBackendApi<T>(
 
 
   const request = useCallback(
-    (currentPayload?: any, alert?: boolean, callback?: (success: any) => any) => {
+    (currentPayload?: any, alert?: boolean, slug?: string | undefined, callback?: (success: any) => any) => {
       setResponse(new ServiceResponse<T>(true));
       let fetchOptions: RequestInit = {
         method,
@@ -56,7 +57,15 @@ export function useBackendApi<T>(
         fetchOptions.body = JSON.stringify(currentPayload);
       }
 
-      fetch(endpoint, fetchOptions)
+      let newEndpoint = endpoint;
+      if (slug) {
+        console.log(slug)
+        newEndpoint += `/${slug}`;
+        
+      }
+
+
+      fetch(newEndpoint, fetchOptions)
         .then(async (response) => {
           if (response.ok) {
             const data: ServiceResponse<T> = await response.json();

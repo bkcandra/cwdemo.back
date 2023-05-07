@@ -25,10 +25,9 @@ const DataTable = ({ headers, data, config }: TableProps) => {
 
 
     const columns: GridColDef[] = headers.map((header) => ({
-
-        field: header,
         headerName: header,
-        flex: header === 'Actions' ? 1 : undefined,
+        field: header,
+        width: 200
     }));
 
 

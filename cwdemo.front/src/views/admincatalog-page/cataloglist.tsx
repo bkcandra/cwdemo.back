@@ -10,6 +10,7 @@ import DataTable from '../shared-components/table';
 import { CatalogType } from '../../utilities/Enums/catalogTypeEnum';
 import CreateCatalog from './catalogcreate';
 import { Link, RouterProvider } from 'react-router-dom';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
@@ -20,14 +21,60 @@ const CatalogList = (): React.ReactElement => {
   const { setTitle } = useContext(MainTitle);
 
 
-  const { request, response: responseGetCatalog } = useBackendApi<ICatalog[]>(
+  const { request: requestGetCatalog, response: responseGetCatalog } = useBackendApi<ICatalog[]>(
     BackendAPI.catalog.get
   );
+  const { request: requestDeleteCatalog } = useBackendApi<void>(
+    BackendAPI.catalog.delete, 'DELETE'
+  );
+
+
+
+  const handleDeleteCatalog = async (e: any, row: any) => {
+    await requestDeleteCatalog('', false, row.id);
+    requestGetCatalog();
+  };
+
+
+  const headers = ['id', 'name', 'description', 'type', 'storeName'];
+  const columns: GridColDef[] = headers.map((header) => ({
+    headerName: header,
+    field: header,
+    width: 200
+  }));
+
+  columns.push({
+    field: "editButton",
+    headerName: "Actions",
+    description: "Actions column.",
+    sortable: false,
+    width: 160,
+    renderCell: (params) => {
+      return (
+        <>
+          <Button
+            variant="contained"
+          >
+            Edit
+          </Button>
+          &nbsp;
+          <Button color='error'
+            variant="contained"
+            onClick={(e) => handleDeleteCatalog(e, params.row)}
+          >
+            delete
+          </Button>
+        </>
+
+
+      );
+    }
+  });
 
   useEffect(() => {
     setTitle('Catalog List');
-    request()
-  }, [setTitle, request]);
+    requestGetCatalog()
+  }, [setTitle, requestGetCatalog]);
 
 
   return (
@@ -49,8 +96,11 @@ const CatalogList = (): React.ReactElement => {
                 Create Catalog
               </Button>
             </Grid>
-
-            <DataTable
+            <DataGrid
+              rows={responseGetCatalog?.content || []}
+              columns={columns}
+            />
+            {/* <DataTable
               headers={['ID', 'Name', 'Description', 'Type', 'Store Name']}
               data={responseGetCatalog?.content || []}
               config={{
@@ -60,7 +110,7 @@ const CatalogList = (): React.ReactElement => {
                 'Type': (catalog: ICatalog) => CatalogType[catalog.type],
                 'Store Name': (catalog: ICatalog) => catalog.storeName
               }}
-            />
+            /> */}
           </Paper>
         </Grid>
       </Grid>

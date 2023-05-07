@@ -27,6 +27,7 @@ console.log(values)
         requestCreateStore(
             values,
             true,
+            '',
             (response) => {
                 if (response.valid) {
                     navigate(-1); // Navigate back one step in the browser history
