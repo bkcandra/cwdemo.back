@@ -1,49 +1,94 @@
-import { useEffect, useState } from 'react';
+import qs from 'qs';
+import { useCallback, useEffect, useState } from 'react';
 import { ServiceResponse } from './interfaces/IBackendResponse';
 
 
 
 
 export const BackendAPI = {
-    store: {
-        get: 'https://localhost:5000/api/Store',
-        create: '/api/stores',
-        update: '/api/stores/{id}',
-        delete: '/api/stores/{id}'
-    },
-    product: {
-        get: '/api/products',
-        create: '/api/products',
-        update: '/api/products/{id}',
-        delete: '/api/products/{id}'
-    }
+  store: {
+    get: 'https://localhost:5000/api/Store',
+    create: 'https://localhost:5000/api/store',
+    update: 'https://localhost:5000/api/store',
+    delete: 'https://localhost:5000/api/store'
+  },
+  catalog: {
+    get: 'https://localhost:5000/api/catalog',
+    create: 'https://localhost:5000/api/catalog/',
+    update: 'https://localhost:5000/api/catalog/',
+    delete: 'https://localhost:5000/api/catalog/'
+  }
 };
 
-export function useBackendApi<T>(url: string, method: string = 'GET', payload?: any): { request: boolean, response: ServiceResponse<T> } {
-    const [request, setRequest] = useState<boolean>(false);
-    const [response, setResponse] = useState<ServiceResponse<T>>(new ServiceResponse());
 
-    useEffect(() => {
-        setRequest(true);
-        const options: RequestInit = {
-            method: method,
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
+
+export function useBackendApi<T>(
+  endpoint: string,
+  method: string = 'GET',
+  payload?: any | undefined
+): {
+  request: (
+    currentPayload?: any | undefined,
+    alert?: boolean,
+    callback?: (success: any) => any
+  ) => void; response: ServiceResponse<T>
+} {
+  const [response, setResponse] = useState<ServiceResponse<T>>(
+    new ServiceResponse()
+  );
+
+
+
+
+  const request = useCallback(
+    (currentPayload?: any, alert?: boolean, callback?: (success: any) => any) => {
+      setResponse(new ServiceResponse<T>(true));
+      let fetchOptions: RequestInit = {
+        method,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      };
+
+      if (currentPayload) {
+        console.log(`current payload ${currentPayload}`)
+        fetchOptions.body = JSON.stringify(currentPayload);
+      }
+
+      fetch(endpoint, fetchOptions)
+        .then(async (response) => {
+          if (response.ok) {
+            const data: ServiceResponse<T> = await response.json();
+            setResponse(new ServiceResponse<T>(true, data.message, data.content));
+            if (callback) {
+              callback(data);
             }
-        };
-        if (payload) {
-            options.body = JSON.stringify(payload);
-        }
-        fetch(url, options)
-            .then(res => res.json())
-            .then((data: ServiceResponse<T>) => setResponse(data))
-            .catch((error: Error) => {
-                setResponse(new ServiceResponse<T>(false, [error.message], undefined));
+            if (alert) {
+              // show success notification
+            }
+          } else {
+            const error = await response.json();
+            setResponse(new ServiceResponse<T>(false, error));
+            if (alert) {
+              // show error notification
+            }
+          }
+        })
+        .catch((error) => {
+          setResponse(new ServiceResponse<T>(false, error));
+          if (alert) {
+            // show error notification
+          }
+        });
+    },
+    [endpoint, method]
+  );
 
-            })
-            .finally(() => setRequest(false));
-    }, [url, method, payload]);
+  useEffect(() => {
+    request();
+  }, []);
 
-    return { request, response };
+  return { request, response };
 }
+

@@ -1,50 +1,54 @@
 import * as React from 'react';
-import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Button from '@mui/material/Button';
 import Title from '../shared-components/Title';
 import { useContext, useEffect, useCallback } from 'react';
 import { MainTitle } from '../main-page/components/maintitle';
 import { Grid, Paper } from '@mui/material';
 import { IStore } from '../../utilities/api/interfaces/IStoreModel'
 import { BackendAPI, useBackendApi } from '../../utilities/api/backendapi';
+import ListTable from '../shared-components/table';
+import DataTable from '../shared-components/table';
+import { Link } from 'react-router-dom';
 
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
-}
+
 
 const AdminStoreList = (): React.ReactElement => {
   const { setTitle } = useContext(MainTitle);
 
+
+
+
+  const { request: requestGetStore, response: responseGetStore } = useBackendApi<IStore[]>(
+    BackendAPI.store.get
+  );
+
+  const { request: requestDeleteStore } = useBackendApi<void>(
+    BackendAPI.store.delete
+  );
+
   useEffect(() => {
     setTitle('Administration - Store');
-  }, [setTitle]);
-
-  const {
-    request: requestGetStore,
-    response: responseGetStore,
-  } = useBackendApi<IStore[]>(BackendAPI.store.get);
+    requestGetStore()
+  }, [setTitle, requestGetStore]);
 
 
-  const renderTableRows = useCallback(() => {
-    console.log(`called`);
-    if (!responseGetStore || !responseGetStore.valid) {
-      return null;
-    }
 
-    if (responseGetStore && responseGetStore.content) {
-      return responseGetStore.content.map((store: IStore) => (
-        <TableRow key={store.id}>
-          <TableCell>{store.id}</TableCell>
-          <TableCell>{store.name}</TableCell>
-          <TableCell>{store.location}</TableCell>
-        </TableRow>
-      ));
-    }
-  }, [requestGetStore]);
+
+  const handleDeleteStore = useCallback((storeId: number) => {
+    console.log(storeId)
+    // requestDeleteStore(storeId).then(() => {
+    //   requestGetStore();
+    // });
+
+  }, [requestDeleteStore, requestGetStore]);
+
+  
+
 
   return (
     <React.Fragment>
@@ -59,16 +63,22 @@ const AdminStoreList = (): React.ReactElement => {
             }}
           >
             <Title>Store List</Title>
-            <Table size="medium">
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Description</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{renderTableRows()}</TableBody>
-            </Table>
+            <Grid container justifyContent="space-between" alignItems="flex-start">
+              <Button variant="contained" component={Link} to="/admin/store/create">
+                Create store
+              </Button>
+            </Grid>
+
+            <DataTable
+              headers={['ID', 'Name', 'Description']}
+              data={responseGetStore?.content || []}
+              config={{
+                'ID': (store: IStore) => store.id,
+                'Name': (store: IStore) => store.name,
+                'Description': (store: IStore) => store.location,
+              }}
+            />
+
           </Paper>
         </Grid>
       </Grid>
@@ -77,3 +87,5 @@ const AdminStoreList = (): React.ReactElement => {
 };
 
 export default AdminStoreList;
+
+

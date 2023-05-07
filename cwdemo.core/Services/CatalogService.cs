@@ -13,20 +13,20 @@ namespace cwdemo.core.Services
         public CatalogService(IRepositories repositories, IMapper mapper) : base(repositories, mapper)
         { }
 
-        public async Task<ServiceResponse<CatalogStoreEntity>> Get(int catalogId)
+        public async Task<ServiceResponse<Catalog>> Get(int catalogId)
         {
             var catalog = await _repositories.Catalogs.GetCatalogById(catalogId);
             if (catalog == null)
-                return new ServiceResponse<CatalogStoreEntity>(false, "Not Found", (int)HttpStatusCode.NotFound);
+                return new ServiceResponse<Catalog>(false, "Not Found", (int)HttpStatusCode.NotFound);
 
             var store = await _repositories.Stores.GetStoreById(catalog.StoreId);
             if (store == null)
-                return new ServiceResponse<CatalogStoreEntity>(false, "Not Found", (int)HttpStatusCode.NotFound);
+                return new ServiceResponse<Catalog>(false, "Not Found", (int)HttpStatusCode.NotFound);
 
-            var catalogStore = _mapper.Map<CatalogStoreEntity>(catalog);
+            var catalogStore = _mapper.Map<Catalog>(catalog);
             catalogStore.StoreName = store.Name;
 
-            return new ServiceResponse<CatalogStoreEntity>(catalogStore);
+            return new ServiceResponse<Catalog>(catalogStore);
         }
 
 
