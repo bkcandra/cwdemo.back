@@ -64,12 +64,12 @@ export default function Dashboard() {
 
                         <Typography variant="h6" sx={{ mb: 1 }}>Store CRUD page:</Typography>
                         <Typography sx={{ mb: 2 }}>
-                            The store CRUD page allows the user to manage stores. The user can add a new store, edit an existing store, or delete a store. The user can also view the details of a store by clicking on the "View" button.
+                            The store CRUD page allows the user to manage stores. The user can add a new store, edit an existing store, or delete a store.
                         </Typography>
 
                         <Typography variant="h6" sx={{ mb: 1 }}>Catalog CRUD page:</Typography>
                         <Typography sx={{ mb: 2 }}>
-                            The catalog CRUD page allows the user to manage items in the catalog. The user can add a new item, edit an existing item, or delete an item. The user can also view the details of an item by clicking on the "View" button.
+                            The catalog CRUD page allows the user to manage items in the catalog. The user can add a new item, edit an existing item, or delete an item.
                         </Typography>
 
                         <Typography variant="h6" sx={{ mb: 1 }}>How to use:</Typography>
