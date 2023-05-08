@@ -37,10 +37,17 @@ const CatalogList = (): React.ReactElement => {
 
 
 
-  const headers = ['id', 'name', 'description', 'type', 'storeName'];
-const columns: GridColDef[] = [
-  {
-    headerName: 'type',
+  const headers = ['id', 'name', 'description', 'storeName'];
+  const columns: GridColDef[] = [
+
+    ...headers.map((header) => ({
+      headerName: header,
+      field: header,
+      width: 200,
+    })),
+  ];
+  columns.push({
+    headerName: 'catalogType',
     field: 'type',
     width: 200,
     renderCell: (params) => {
@@ -50,13 +57,7 @@ const columns: GridColDef[] = [
         return 'Topping';
       }
     }
-  },
-  ...headers.map((header) => ({
-    headerName: header,
-    field: header,
-    width: 200,
-  })),
-];
+  });
 
   columns.push({
     field: "editButton",
@@ -88,7 +89,6 @@ const columns: GridColDef[] = [
 
   return (
     <React.Fragment>
-
       <Grid container spacing={3}>
         {/* Chart */}
         <Grid item lg={12}>
