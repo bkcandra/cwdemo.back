@@ -38,9 +38,6 @@ export function useBackendApi<T>(
     new ServiceResponse()
   );
 
-
-
-
   const request = useCallback(
     (currentPayload?: any, alert?: boolean, slug?: string | undefined, callback?: (success: any) => any) => {
       setResponse(new ServiceResponse<T>(true));
@@ -61,7 +58,6 @@ export function useBackendApi<T>(
         newEndpoint += `/${slug}`;
         
       }
-
 
       fetch(newEndpoint, fetchOptions)
         .then(async (response) => {
