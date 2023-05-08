@@ -14,7 +14,7 @@ Before using this app, make sure that the backend API is up and running on local
 3. if run successfully you will see swagger page at https://localhost:5000/swagger/index.html
 
 Order page:
-The order page allows the user to place an order. The user can select a store and then add items to the cart. Once the user is done adding items, they can place the order. The order details will be sent to the backend API and a confirmation message will be displayed to the user.
+The order page allows the user to place an order. The user can select a store and then add items to the cart. Once the user is done adding items, they can place the order. The order details along twith total price will be displayed to the user, at this point there is no api to accept order.
 
 Store CRUD page:
 The store CRUD page allows the user to manage stores. The user can add a new store, edit an existing store, or delete a store.
