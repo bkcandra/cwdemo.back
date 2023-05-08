@@ -39,7 +39,6 @@ const CatalogList = (): React.ReactElement => {
 
   const headers = ['id', 'name', 'description', 'storeName'];
   const columns: GridColDef[] = [
-
     ...headers.map((header) => ({
       headerName: header,
       field: header,
