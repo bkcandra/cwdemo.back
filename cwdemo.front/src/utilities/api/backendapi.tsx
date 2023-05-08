@@ -53,13 +53,11 @@ export function useBackendApi<T>(
       };
 
       if (currentPayload) {
-        console.log(`current payload ${currentPayload}`)
         fetchOptions.body = JSON.stringify(currentPayload);
       }
 
       let newEndpoint = endpoint;
       if (slug) {
-        console.log(slug)
         newEndpoint += `/${slug}`;
         
       }
@@ -95,7 +93,6 @@ export function useBackendApi<T>(
   );
 
   useEffect(() => {
-    request();
   }, []);
 
   return { request, response };

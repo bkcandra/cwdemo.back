@@ -2,6 +2,8 @@
 import {
   createBrowserRouter,
   RouterProvider,
+  useLocation,
+  useParams,
 } from "react-router-dom";
 import CreateCatalog from "../admincatalog-page/catalogcreate";
 import CatalogList from "../admincatalog-page/cataloglist";
@@ -11,6 +13,18 @@ import Dashboard from "../dashboard-page/dashboard";
 import ErrorPage from "../error-page/errorpage";
 import OrderPage from "../order-page/orders";
 import MainPage from "./mainpage";
+
+
+const UpdateStoreWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  return <CreateStore mode="update" id={id} />;
+};
+
+const UpdateCatalogWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  return <CreateCatalog mode="update" id={id} />;
+};
+
 
 
 const mainrouter = createBrowserRouter([
@@ -33,11 +47,11 @@ const mainrouter = createBrowserRouter([
       },
       {
         path: "/admin/store/create",
-        element: <CreateStore />,
+        element: <CreateStore mode="create" />,
       },
       {
-        path: "/admin/store/update",
-        element: <CreateStore />,
+        path: "/admin/store/update/:id",
+        element: <UpdateStoreWrapper />,
       },
       {
         path: "/admin/catalog",
@@ -45,11 +59,11 @@ const mainrouter = createBrowserRouter([
       },
       {
         path: "/admin/catalog/create",
-        element: <CreateCatalog />,
+        element: <CreateCatalog mode="create" />,
       },
       {
-        path: "/admin/catalog/update",
-        element: <CreateCatalog />,
+        path: "/admin/catalog/update/:id",
+        element: <UpdateCatalogWrapper />,
       }
     ],
   },

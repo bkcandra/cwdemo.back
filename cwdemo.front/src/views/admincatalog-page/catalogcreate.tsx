@@ -1,48 +1,71 @@
 
-import { Button, Grid, MenuItem, Paper, TextField } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Grid, MenuItem, Paper, TextField } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as Yup from 'yup';
-import { ICreateCatalog } from '../../utilities/api/interfaces/ICatalogModel';
+import { ICatalog, ICreateCatalog, IUpdateCatalog } from '../../utilities/api/interfaces/ICatalogModel';
 import { MainTitle } from '../main-page/components/maintitle';
 import Title from '../shared-components/Title';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { BackendAPI, useBackendApi } from '../../utilities/api/backendapi';
+import { ServiceResponse } from '../../utilities/api/interfaces/IBackendResponse';
 
-
-const CreateCatalog = (): React.ReactElement => {
+interface CreateCatalogProps {
+    mode: 'create' | 'update';
+    id?: string | null;
+}
+const CreateCatalog = ({ mode = 'create', id }: CreateCatalogProps): React.ReactElement => {
     const { setTitle } = useContext(MainTitle);
     const navigate = useNavigate();
-    const { request: requestCreateStore } = useBackendApi<ICreateCatalog>(BackendAPI.catalog.create, 'POST');
+    const [isEditMode, setIsEditMode] = useState(!!id);
+
+
+    const { request: requestCreateCatalog } = useBackendApi<ICreateCatalog>(BackendAPI.catalog.create, 'POST');
+    const { request: requestGetSingle, response: responseGetSingle } = useBackendApi<ICatalog>(BackendAPI.catalog.get, 'GET');
+    const { request: requestUpdateCatalog } = useBackendApi<ICatalog>(BackendAPI.catalog.update, 'PUT');
+
 
 
 
     useEffect(() => {
-        setTitle('Create Catalog');
-    }, [setTitle]);
-
-    const handleSubmit = async (values: ICreateCatalog) => {
-console.log(values)
-        requestCreateStore(
-            values,
-            true,
-            '',
-            (response) => {
+        setTitle(isEditMode ? 'Edit Catalog' : 'Create Catalog');
+        if (isEditMode && id) {
+            setIsEditMode(true);
+            requestGetSingle('', true, id, (response) => {
                 if (response.valid) {
-                    navigate(-1); // Navigate back one step in the browser history
+                    formik.setValues(response.content);
                 }
-            }
-        );
+            });
+        }
+    }, []);
+
+
+    const handleSubmit = async (values: any) => {
+        if (isEditMode) {
+            requestUpdateCatalog(values, true, values.id.toString(), (response: ServiceResponse<ICatalog>) => {
+                if (response.valid) {
+                    navigate(-1);
+                }
+            });
+        } else {
+            requestCreateCatalog(values, true, '', (response: ServiceResponse<ICreateCatalog>) => {
+                if (response.valid) {
+                    navigate(-1);
+                }
+            });
+        }
     };
 
-    const formik = useFormik<ICreateCatalog>({
+    const formik = useFormik<IUpdateCatalog>({
         initialValues: {
+            id: 0,
             name: '',
             description: '',
             price: 0,
             type: 1,
-            storeId: 1
+            storeId: 1,
+            active: true
         },
         validationSchema: Yup.object({
             name: Yup.string().required('Name is required'),
@@ -69,6 +92,7 @@ console.log(values)
                     >
                         <Title>Create Catalog</Title>
                         <form onSubmit={formik.handleSubmit}>
+                            {isEditMode && <input type="hidden" name="id" value={formik.values.id} />}
                             <TextField
                                 fullWidth
                                 id="name"
@@ -139,6 +163,18 @@ console.log(values)
                                 helperText={formik.touched.storeId && formik.errors.storeId}
                                 sx={{ mt: 2 }}
                             />
+                            {isEditMode && <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={formik.values.active}
+                                        onChange={formik.handleChange}
+                                        name="active"
+                                    />
+                                }
+                                label="Active"
+                            />}
+
+
                             <br /><br />
                             <Button variant="contained" type="submit">Create</Button>
 

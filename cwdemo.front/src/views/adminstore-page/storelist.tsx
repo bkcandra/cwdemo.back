@@ -17,7 +17,6 @@ import { Link } from 'react-router-dom';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 
-
 const AdminStoreList = (): React.ReactElement => {
   const { setTitle } = useContext(MainTitle);
 
@@ -37,7 +36,7 @@ const AdminStoreList = (): React.ReactElement => {
   useEffect(() => {
     setTitle('Administration - Store');
     requestGetStore()
-  }, [setTitle, requestGetStore]);
+  }, [ ]);
 
 
 
@@ -64,7 +63,7 @@ const AdminStoreList = (): React.ReactElement => {
       return (
         <>
           <Button
-            variant="contained"
+            variant="contained" component={Link} to={`/admin/store/update/${params.row.id}`}
           >
             Edit
           </Button>

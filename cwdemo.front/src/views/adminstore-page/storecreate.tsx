@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Paper } from '@mui/material';
 import { MainTitle } from '../main-page/components/maintitle';
 import Title from '../shared-components/Title';
@@ -10,48 +10,56 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 
-import { ICreateStore } from '../../utilities/api/interfaces/IStoreModel';
+import { ICreateStore, IStore } from '../../utilities/api/interfaces/IStoreModel';
 import { useBackendApi, BackendAPI } from '../../utilities/api/backendapi';
 import { ICreateCatalog } from '../../utilities/api/interfaces/ICatalogModel';
 
-const initialValues: ICreateStore = {
-    name: '',
-    location: '',
-    active: true,
-};
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
     location: Yup.string().required('Location is required'),
 });
 
-const CreateStore = (): React.ReactElement => {
+interface CreateStoreProps {
+    mode: 'create' | 'update';
+    id?: string | null;
+}
+const CreateStore = ({ mode = 'create', id }: CreateStoreProps): React.ReactElement => {
     const { setTitle } = useContext(MainTitle);
     const navigate = useNavigate();
-
+    const [isEditMode, setIsEditMode] = useState(!!id);
 
 
     const { request: requestCreateStore } = useBackendApi<ICreateStore>(BackendAPI.store.create, 'POST');
+    const { request: requestGetSingle,  response: responseGetSingle } = useBackendApi<ICreateStore>(BackendAPI.store.get, 'GET');
+    const { request: requestUpdateStore } = useBackendApi<ICreateStore>(BackendAPI.store.update, 'PUT');
 
-
-
-    const handleSubmit = async (values: ICreateStore) => {
-        //console.log(values);
-        requestCreateStore(
-            values,
-            true,
-            '',
-            (response) => {
+    const initialValues: IStore = {
+        id: 0,
+        name: '',
+        location: '',
+        active: true,
+    };
+    
+    const handleSubmit = async (values: any) => {
+        if (isEditMode) {
+            requestUpdateStore(values, true, values.id.toString(), (response) => {
                 if (response.valid) {
-                    navigate(-1); // Navigate back one step in the browser history
+                    navigate(-1);
                 }
-            }
-        );
+            });
+        } else {
+            requestCreateStore(values, true, '', (response) => {
+                if (response.valid) {
+                    navigate(-1);
+                }
+            });
+        }
     };
 
 
     const formik = useFormik({
-        initialValues,
+        initialValues: initialValues,
         validationSchema,
         onSubmit: handleSubmit,
     });
@@ -60,17 +68,31 @@ const CreateStore = (): React.ReactElement => {
         formik.resetForm();
     };
 
-    React.useEffect(() => {
-        setTitle('Create Store');
-    }, [setTitle]);
+    
 
+    useEffect(() => {
+        setTitle(isEditMode ? 'Edit Store' : 'Create Store');
+        if (isEditMode && id) {
+            setIsEditMode(true);
+            requestGetSingle('', true, id, (response) => {
+                if (response.valid) {
+                    formik.setValues(response.content);
+                }
+            });
+        }
+    }, []);
+    
+
+    
     return (
         <React.Fragment>
             <Grid container spacing={3}>
                 <Grid item lg={12}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                        <Title>Create Store</Title>
+                        <Title> {isEditMode ? 'Edit' : 'Create'} Store</Title>
+
                         <form onSubmit={formik.handleSubmit}>
+                            {isEditMode && <input type="hidden" name="id" value={formik.values.id} />}
                             <TextField
                                 fullWidth
                                 id="name"
@@ -105,7 +127,7 @@ const CreateStore = (): React.ReactElement => {
                             />
                             <br></br>
                             <Button type="submit" variant="contained" sx={{ mr: 2, mt: 2 }}>
-                                Create
+                                {isEditMode ? 'Edit' : 'Create'}
                             </Button>
                             <Button type="button" variant="outlined" onClick={() => navigate(-1)} sx={{ mt: 2 }}>
                                 Back
