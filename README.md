@@ -17,10 +17,10 @@ Order page:
 The order page allows the user to place an order. The user can select a store and then add items to the cart. Once the user is done adding items, they can place the order. The order details will be sent to the backend API and a confirmation message will be displayed to the user.
 
 Store CRUD page:
-The store CRUD page allows the user to manage stores. The user can add a new store, edit an existing store, or delete a store. The user can also view the details of a store by clicking on the "View" button.
+The store CRUD page allows the user to manage stores. The user can add a new store, edit an existing store, or delete a store.
 
 Catalog CRUD page:
-The catalog CRUD page allows the user to manage items in the catalog. The user can add a new item, edit an existing item, or delete an item. The user can also view the details of an item by clicking on the "View" button.
+The catalog CRUD page allows the user to manage items in the catalog. The user can add a new item, edit an existing item, or delete an item.
 
 
 How to use:
